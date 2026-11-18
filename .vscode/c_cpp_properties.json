@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Mac Qt 5.14",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers",
+                "/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtGui.framework/Headers",
+                "/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers",
+                "/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtSql.framework/Headers",
+                "/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/macx-clang"
+            ],
+            "macFrameworkPath": [
+                "/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib"
+            ],
+            "defines": [
+                "QT_CORE_LIB",
+                "QT_GUI_LIB",
+                "QT_WIDGETS_LIB",
+                "QT_SQL_LIB"
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-x64"
+        }
+    ],
+    "version": 4
+}
