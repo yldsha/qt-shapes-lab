@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     verticesBox = new QSpinBox;
     verticesBox->setRange(3, 12);
     verticesBox->setValue(5);
+    verticesBox->setEnabled(false);
 
     auto *addButton = new QPushButton("Добавить");
 
@@ -62,7 +63,12 @@ MainWindow::MainWindow(QWidget *parent)
     resize(900, 700);
 
     connect(addButton, &QPushButton::clicked, this, &MainWindow::onAddShape);
+    connect(typeBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, [this](int index) {
+                verticesBox->setEnabled(index == 2);
+            });
 }
+
 
 MainWindow::~MainWindow()
 {
