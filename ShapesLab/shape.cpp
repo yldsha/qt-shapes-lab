@@ -2,6 +2,7 @@
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QtMath>
 
 Shape::Shape(int id, double width, double height)
     : m_id(id), m_width(width), m_height(height)
@@ -44,9 +45,26 @@ void EllipseShape::drawShape(QPainter *painter)
 
 void PolygonShape::drawShape(QPainter *painter)
 {
-    QPolygonF triangle;
-    triangle << QPointF(m_width / 2, 0)
-             << QPointF(m_width, m_height)
-             << QPointF(0, m_height);
-    painter->drawPolygon(triangle);
+    const double cx = m_width / 2;    // центр фигуры
+    const double cy = m_height / 2;
+    const double rx = m_width / 2;    // отступ от центра по горизонтали
+    const double ry = m_height / 2;   // отступ от центра по вертикали
+
+    QPolygonF polygon;
+    for (int i = 0; i < m_vertices; ++i) {
+        // угол вершины: шаг 2π/n, первая вершина сверху (-π/2)
+        const double angle = -M_PI / 2 + 2 * M_PI * i / m_vertices;
+
+        const double x = cx + rx * qCos(angle);
+        const double y = cy + ry * qSin(angle);
+
+        polygon << QPointF(x, y);
+    }
+
+    painter->drawPolygon(polygon);
+}
+
+PolygonShape::PolygonShape(int id, double width, double height, int vertices)
+: Shape(id, width, height), m_vertices(vertices)
+{
 }

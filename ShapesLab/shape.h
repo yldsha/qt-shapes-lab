@@ -18,14 +18,13 @@ public:
     virtual Type    shapeType() const = 0;
     virtual QString typeName()  const = 0;
 
-
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
 
 protected:
-    virtual void   drawShape(QPainter *painter) = 0;   
-    virtual QColor fillColor() const = 0;             
+    virtual void   drawShape(QPainter *painter) = 0;
+    virtual QColor fillColor() const = 0;
     QRectF shapeRect() const { return QRectF(0, 0, m_width, m_height); }
 
     int    m_id;
@@ -36,7 +35,7 @@ protected:
 class RectShape : public Shape
 {
 public:
-    using Shape::Shape;  
+    using Shape::Shape;
     Type    shapeType() const override { return Type::Rectangle; }
     QString typeName()  const override { return "Прямоугольник"; }
 protected:
@@ -58,12 +57,14 @@ protected:
 class PolygonShape : public Shape
 {
 public:
-    using Shape::Shape;
+    PolygonShape(int id, double width, double height, int vertices);
     Type    shapeType() const override { return Type::Polygon; }
     QString typeName()  const override { return "Многоугольник"; }
 protected:
     void   drawShape(QPainter *painter) override;
     QColor fillColor() const override { return QColor(230, 140, 230); }
+private:
+    int m_vertices;
 };
 
 #endif // SHAPE_H

@@ -26,7 +26,7 @@ private slots:
     void onAddShape();
 
 private:
-    Shape *createShape(int typeIndex, int id, int w, int h);
+    Shape *createShape(int typeIndex, int id, int w, int h, int vertices);
 
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -34,9 +34,10 @@ private:
     QComboBox      *typeBox;
     QSpinBox       *widthBox;
     QSpinBox       *heightBox;
+    QSpinBox       *verticesBox;
 
-    int nextId = 1;              // номер для следующей фигуры
-    QMap<int, Shape*> shapes;    // id -> фигура (пригодится для удаления и линий)
+    int nextId = 1;              
+    QMap<int, Shape*> shapes;    
 };
 
 #endif // MAINWINDOW_H

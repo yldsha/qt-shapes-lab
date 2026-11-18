@@ -34,6 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
     heightBox->setRange(20, 300);
     heightBox->setValue(70);
 
+    verticesBox = new QSpinBox;
+    verticesBox->setRange(3, 12);
+    verticesBox->setValue(5);
+
     auto *addButton = new QPushButton("Добавить");
 
     auto *controls = new QHBoxLayout;
@@ -43,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
     controls->addWidget(widthBox);
     controls->addWidget(new QLabel("Высота:"));
     controls->addWidget(heightBox);
+    controls->addWidget(new QLabel("Вершин:"));
+    controls->addWidget(verticesBox);
     controls->addWidget(addButton);
     controls->addStretch();
 
@@ -64,12 +70,12 @@ MainWindow::~MainWindow()
 }
 
 
-Shape *MainWindow::createShape(int typeIndex, int id, int w, int h)
+Shape *MainWindow::createShape(int typeIndex, int id, int w, int h, int v)
 {
     switch (typeIndex) {
     case 0:  return new RectShape(id, w, h);
     case 1:  return new EllipseShape(id, w, h);
-    default: return new PolygonShape(id, w, h);
+    default: return new PolygonShape(id, w, h, v);
     }
 }
 
@@ -77,8 +83,9 @@ void MainWindow::onAddShape()
 {
     const int w = widthBox->value();
     const int h = heightBox->value();
+    const int v = verticesBox->value();
 
-    Shape *shape = createShape(typeBox->currentIndex(), nextId, w, h);
+    Shape *shape = createShape(typeBox->currentIndex(), nextId, w, h, v);
     shapes.insert(nextId, shape);
     nextId++;
 
