@@ -1,9 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "shape.h"
 
-#include <QLabel>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QComboBox>
+#include <QSpinBox>
 #include <QPushButton>
+#include <QLabel>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QRandomGenerator>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -11,21 +18,44 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // 1. Создаём объекты
-    label = new QLabel("Нажато: 0");
-    auto *button = new QPushButton("Нажми меня");
 
-    // 2. Раскладываем: надпись сверху, кнопка под ней
+    scene = new QGraphicsScene(0, 0, 800, 600, this);
+    view  = new QGraphicsView(scene);
+
+    // Панель управления
+    typeBox = new QComboBox;
+    typeBox->addItems({"Прямоугольник", "Эллипс", "Многоугольник"});
+
+    widthBox = new QSpinBox;
+    widthBox->setRange(20, 300);
+    widthBox->setValue(100);
+
+    heightBox = new QSpinBox;
+    heightBox->setRange(20, 300);
+    heightBox->setValue(70);
+
+    auto *addButton = new QPushButton("Добавить");
+
+    auto *controls = new QHBoxLayout;
+    controls->addWidget(new QLabel("Тип:"));
+    controls->addWidget(typeBox);
+    controls->addWidget(new QLabel("Ширина:"));
+    controls->addWidget(widthBox);
+    controls->addWidget(new QLabel("Высота:"));
+    controls->addWidget(heightBox);
+    controls->addWidget(addButton);
+    controls->addStretch();
+
     auto *layout = new QVBoxLayout;
-    layout->addWidget(label);
-    layout->addWidget(button);
+    layout->addLayout(controls);
+    layout->addWidget(view);
 
     auto *central = new QWidget;
     central->setLayout(layout);
     setCentralWidget(central);
+    resize(900, 700);
 
-    // 3. Когда кнопку нажмут, вызови onButtonClicked
-    connect(button, &QPushButton::clicked, this, &MainWindow::onButtonClicked);
+    connect(addButton, &QPushButton::clicked, this, &MainWindow::onAddShape);
 }
 
 MainWindow::~MainWindow()
@@ -33,8 +63,27 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onButtonClicked()
+
+Shape *MainWindow::createShape(int typeIndex, int id, int w, int h)
 {
-    count++;
-    label->setText("Нажато: " + QString::number(count));
+    switch (typeIndex) {
+    case 0:  return new RectShape(id, w, h);
+    case 1:  return new EllipseShape(id, w, h);
+    default: return new PolygonShape(id, w, h);
+    }
+}
+
+void MainWindow::onAddShape()
+{
+    const int w = widthBox->value();
+    const int h = heightBox->value();
+
+    Shape *shape = createShape(typeBox->currentIndex(), nextId, w, h);
+    shapes.insert(nextId, shape);
+    nextId++;
+
+    scene->addItem(shape);  
+
+    auto *rng = QRandomGenerator::global();
+    shape->setPos(rng->bounded(800 - w), rng->bounded(600 - h));
 }

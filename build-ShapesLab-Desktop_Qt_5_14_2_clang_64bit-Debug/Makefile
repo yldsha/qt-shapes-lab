@@ -53,9 +53,11 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../ShapesLab/main.cpp \
-		../ShapesLab/mainwindow.cpp moc_mainwindow.cpp
+		../ShapesLab/mainwindow.cpp \
+		../ShapesLab/shape.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
+		shape.o \
 		moc_mainwindow.o
 DIST          = /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/spec_pre.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/qdevice.pri \
@@ -237,6 +239,7 @@ DIST          = /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/spec_pre.
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/qt_config.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/spec_post.prf \
+		../ShapesLab/.qmake.stash \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/mac/sdk.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/toolchain.prf \
@@ -265,8 +268,10 @@ DIST          = /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/spec_pre.
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/exceptions.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/yacc.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/lex.prf \
-		../ShapesLab/ShapesLab.pro ../ShapesLab/mainwindow.h ../ShapesLab/main.cpp \
-		../ShapesLab/mainwindow.cpp
+		../ShapesLab/ShapesLab.pro ../ShapesLab/mainwindow.h \
+		../ShapesLab/shape.h ../ShapesLab/main.cpp \
+		../ShapesLab/mainwindow.cpp \
+		../ShapesLab/shape.cpp
 QMAKE_TARGET  = ShapesLab
 DESTDIR       = 
 TARGET        = ShapesLab.app/Contents/MacOS/ShapesLab
@@ -469,6 +474,7 @@ Makefile: ../ShapesLab/ShapesLab.pro /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspe
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/qt_config.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/mac/sdk.prf \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/toolchain.prf \
@@ -683,6 +689,7 @@ Makefile: ../ShapesLab/ShapesLab.pro /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspe
 /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/qt_config.prf:
 /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/macx-clang/qmake.conf:
 /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/exclusive_builds.prf:
 /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/mac/sdk.prf:
 /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/toolchain.prf:
@@ -746,8 +753,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../ShapesLab/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../ShapesLab/main.cpp ../ShapesLab/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../ShapesLab/mainwindow.h ../ShapesLab/shape.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../ShapesLab/main.cpp ../ShapesLab/mainwindow.cpp ../ShapesLab/shape.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../ShapesLab/mainwindow.ui $(DISTDIR)/
 
 
@@ -758,6 +765,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r ShapesLab.app
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -788,6 +796,8 @@ compiler_moc_header_clean:
 moc_mainwindow.cpp: ../ShapesLab/mainwindow.h \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/QMap \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/qmap.h \
 		moc_predefs.h \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/bin/moc
 	/Users/a1234/Qt5.14.2/5.14.2/clang_64/bin/moc $(DEFINES) --include /Users/a1234/Desktop/work/projects/qt-shapes-lab/build-ShapesLab-Desktop_Qt_5_14_2_clang_64bit-Debug/moc_predefs.h -I/Users/a1234/Qt5.14.2/5.14.2/clang_64/mkspecs/macx-clang -I/Users/a1234/Desktop/work/projects/qt-shapes-lab/ShapesLab -I/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers -I/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtGui.framework/Headers -I/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtSql.framework/Headers -I/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/21/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib ../ShapesLab/mainwindow.h -o moc_mainwindow.cpp
@@ -818,6 +828,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 main.o: ../ShapesLab/main.cpp ../ShapesLab/mainwindow.h \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/QMap \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/qmap.h \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../ShapesLab/main.cpp
@@ -825,8 +837,35 @@ main.o: ../ShapesLab/main.cpp ../ShapesLab/mainwindow.h \
 mainwindow.o: ../ShapesLab/mainwindow.cpp ../ShapesLab/mainwindow.h \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
-		ui_mainwindow.h
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/QMap \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		ui_mainwindow.h \
+		../ShapesLab/shape.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QGraphicsView \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QComboBox \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QLabel \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QHBoxLayout \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qboxlayout.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QVBoxLayout \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/QRandomGenerator \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtCore.framework/Headers/qrandom.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../ShapesLab/mainwindow.cpp
+
+shape.o: ../ShapesLab/shape.cpp ../ShapesLab/shape.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtGui.framework/Headers/QPainter \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/QStyleOptionGraphicsItem \
+		/Users/a1234/Qt5.14.2/5.14.2/clang_64/lib/QtWidgets.framework/Headers/qstyleoption.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o shape.o ../ShapesLab/shape.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
