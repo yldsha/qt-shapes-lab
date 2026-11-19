@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QtMath>
+#include "connection.h"
 
 Shape::Shape(int id, double width, double height)
     : m_id(id), m_width(width), m_height(height)
@@ -67,4 +68,25 @@ void PolygonShape::drawShape(QPainter *painter)
 PolygonShape::PolygonShape(int id, double width, double height, int vertices)
 : Shape(id, width, height), m_vertices(vertices)
 {
+}
+
+void Shape::addConnection(Connection* connection)
+{
+    m_connections.append(connection);
+}
+
+void Shape::removeConnection(Connection* connection)
+{
+    m_connections.removeAll(connection);
+}
+
+QVariant Shape::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionHasChanged) {
+        for (int i = 0; i < m_connections.size(); i++){
+            m_connections[i]->updatePosition();
+        }
+
+    }
+    return QGraphicsItem::itemChange(change, value);
 }
