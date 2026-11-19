@@ -1,0 +1,22 @@
+# папки и файлы сборки
+build-*/
+*.o
+moc_*
+ui_*.h
+qrc_*
+Makefile*
+.qmake.stash
+
+# личные настройки Qt Creator
+*.pro.user
+*.pro.user.*
+
+# настройки редактора
+.vscode/
+
+# база SQLite создаётся программой
+*.db
+*.sqlite
+
+# системный мусор macOS
+.DS_Store
