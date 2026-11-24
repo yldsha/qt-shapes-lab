@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    db.open("shapes.db");
 
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     view  = new QGraphicsView(scene);
@@ -102,6 +102,8 @@ void MainWindow::onAddShape()
     nextId++;
 
     scene->addItem(shape);  
+    db.insertShape(shape -> id(), shape -> typeName());
+    db.updateTotalCount(shape -> typeName());
 
     auto *rng = QRandomGenerator::global();
     shape->setPos(rng->bounded(800 - w), rng->bounded(600 - h));
@@ -130,4 +132,7 @@ void MainWindow::onConnectShapes()
     a->addConnection(connection);
     b->addConnection(connection);
     scene->addItem(connection);
+
+    db.insertConnection(a -> id(), b -> id());
+
 }

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMap>
+#include "shapedatabase.h"
 
 class QGraphicsScene;
 class QGraphicsView;
@@ -28,6 +29,7 @@ private slots:
 
 private:
     Shape *createShape(int typeIndex, int id, int w, int h, int vertices);
+    ShapeDatabase db;
 
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
