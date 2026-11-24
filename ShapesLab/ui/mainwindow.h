@@ -10,6 +10,8 @@ class QGraphicsView;
 class QComboBox;
 class QSpinBox;
 class Shape;
+class QTableView;
+class QSqlTableModel;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,6 +32,7 @@ private slots:
 private:
     Shape *createShape(int typeIndex, int id, int w, int h, int vertices);
     ShapeDatabase db;
+    
 
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -38,6 +41,8 @@ private:
     QSpinBox       *widthBox;
     QSpinBox       *heightBox;
     QSpinBox       *verticesBox;
+    QTableView     *tableView;
+    QSqlTableModel *model;
 
     int nextId = 1;              
     QMap<int, Shape*> shapes;    

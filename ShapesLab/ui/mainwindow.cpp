@@ -13,6 +13,10 @@
 #include <QVBoxLayout>
 #include <QRandomGenerator>
 #include <QStatusBar>
+#include <QTableView>
+#include <QSqlTableModel>
+#include <QSplitter>
+#include <QHeaderView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,6 +24,21 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     db.open("shapes.db");
+
+    model = new QSqlTableModel(this);
+    model->setTable("shapes_view");
+    model->select();
+    model->setHeaderData(0, Qt::Horizontal, "ID");
+    model->setHeaderData(1, Qt::Horizontal, "Тип");
+    model->setHeaderData(2, Qt::Horizontal, "Связи");
+    model->setHeaderData(3, Qt::Horizontal, "Количество");
+
+    tableView = new QTableView;
+    tableView->setModel(model);
+    tableView->resizeColumnsToContents();
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);   
+    tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);    
+    tableView->horizontalHeader()->setStretchLastSection(true);      
 
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     view  = new QGraphicsView(scene);
@@ -60,7 +79,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     auto *layout = new QVBoxLayout;
     layout->addLayout(controls);
-    layout->addWidget(view);
+    auto *splitter = new QSplitter;
+    splitter->addWidget(view);        // слева холст
+    splitter->addWidget(tableView);   // справа таблица
+    splitter->setSizes({650, 350});
+    splitter->setStretchFactor(0, 3); // холст шире таблицы в 3 раза
+    splitter->setStretchFactor(1, 1);
+    layout->addWidget(splitter);
 
     auto *central = new QWidget;
     central->setLayout(layout);
@@ -104,6 +129,7 @@ void MainWindow::onAddShape()
     scene->addItem(shape);  
     db.insertShape(shape -> id(), shape -> typeName());
     db.updateTotalCount(shape -> typeName());
+    model -> select();
 
     auto *rng = QRandomGenerator::global();
     shape->setPos(rng->bounded(800 - w), rng->bounded(600 - h));
@@ -134,5 +160,6 @@ void MainWindow::onConnectShapes()
     scene->addItem(connection);
 
     db.insertConnection(a -> id(), b -> id());
+    model -> select();
 
 }
