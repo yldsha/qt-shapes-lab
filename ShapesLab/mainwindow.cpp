@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "shape.h"
+#include "connection.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -11,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QRandomGenerator>
+#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -40,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     verticesBox->setEnabled(false);
 
     auto *addButton = new QPushButton("Добавить");
+    auto *connectButton = new QPushButton("Соединить выбранные");
 
     auto *controls = new QHBoxLayout;
     controls->addWidget(new QLabel("Тип:"));
@@ -51,7 +54,9 @@ MainWindow::MainWindow(QWidget *parent)
     controls->addWidget(new QLabel("Вершин:"));
     controls->addWidget(verticesBox);
     controls->addWidget(addButton);
+    controls->addWidget(connectButton);
     controls->addStretch();
+    
 
     auto *layout = new QVBoxLayout;
     layout->addLayout(controls);
@@ -67,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
             this, [this](int index) {
                 verticesBox->setEnabled(index == 2);
             });
+    connect(connectButton, &QPushButton::clicked, this, &MainWindow::onConnectShapes);
 }
 
 
@@ -99,4 +105,29 @@ void MainWindow::onAddShape()
 
     auto *rng = QRandomGenerator::global();
     shape->setPos(rng->bounded(800 - w), rng->bounded(600 - h));
+}
+
+void MainWindow::onConnectShapes()
+{
+    const QList<QGraphicsItem*> selected = scene->selectedItems();
+    if (selected.size() != 2) {
+        statusBar()->showMessage("Выделите ровно две фигуры (Cmd+клик)", 3000);
+        return;
+    }
+
+    Shape *a = dynamic_cast<Shape*>(selected[0]);
+    Shape *b = dynamic_cast<Shape*>(selected[1]);
+    if (!a || !b)
+        return;
+
+    for (Connection *c : a->connections()) {
+        if (c->getFrom() == b || c->getTo() == b) {
+            statusBar()->showMessage("Эти фигуры уже связаны", 3000);
+            return;
+        }
+    }
+    auto *connection = new Connection(a, b);
+    a->addConnection(connection);
+    b->addConnection(connection);
+    scene->addItem(connection);
 }

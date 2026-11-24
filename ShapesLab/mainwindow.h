@@ -24,6 +24,7 @@ public:
 
 private slots:
     void onAddShape();
+    void onConnectShapes();
 
 private:
     Shape *createShape(int typeIndex, int id, int w, int h, int vertices);
