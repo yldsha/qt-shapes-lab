@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "shape.h"
 #include "connection.h"
+#include "countdelegate.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -40,11 +41,15 @@ MainWindow::MainWindow(QWidget *parent)
     tableView->setModel(model);
     tableView->resizeColumnsToContents();
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);   
-    tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);    
+    tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);  
+    tableView->setItemDelegateForColumn(3, new CountDelegate(tableView));  
     auto *header = tableView->horizontalHeader();
     header->setSectionResizeMode(QHeaderView::Stretch);              // все столбцы делят ширину
     header->setSectionResizeMode(0, QHeaderView::ResizeToContents);   // ID — по содержимому
-    header->setSectionResizeMode(3, QHeaderView::ResizeToContents);   // Количество — по содержимому 
+    header->setSectionResizeMode(3, QHeaderView::Fixed);
+    header->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    tableView->setColumnWidth(3, 110);
+    
 
     //  Фильтр
     idFromBox = new QSpinBox;

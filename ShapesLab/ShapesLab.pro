@@ -20,18 +20,20 @@ SOURCES += \
     ui/mainwindow.cpp \
     graph/shape.cpp \
     graph/connection.cpp \
-    db/shapedatabase.cpp
+    db/shapedatabase.cpp \
+    delegates/countdelegate.cpp
 
 HEADERS += \
     ui/mainwindow.h \
     graph/shape.h \
     graph/connection.h \
-    db/shapedatabase.h
+    db/shapedatabase.h \
+    delegates/countdelegate.h
 
 FORMS += \
     ui/mainwindow.ui
 
-INCLUDEPATH += $$PWD/ui $$PWD/graph $$PWD/db
+INCLUDEPATH += $$PWD/ui $$PWD/graph $$PWD/db $$PWD/delegates
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
