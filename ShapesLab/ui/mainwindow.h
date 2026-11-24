@@ -28,10 +28,12 @@ public:
 private slots:
     void onAddShape();
     void onConnectShapes();
+    void onDeleteShape();
 
 private:
     Shape *createShape(int typeIndex, int id, int w, int h, int vertices);
     ShapeDatabase db;
+    void deleteShape(int id);
     
 
     Ui::MainWindow *ui;

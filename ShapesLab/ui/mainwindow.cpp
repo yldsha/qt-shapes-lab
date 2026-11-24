@@ -17,6 +17,7 @@
 #include <QSqlTableModel>
 #include <QSplitter>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,7 +39,10 @@ MainWindow::MainWindow(QWidget *parent)
     tableView->resizeColumnsToContents();
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);   
     tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);    
-    tableView->horizontalHeader()->setStretchLastSection(true);      
+    auto *header = tableView->horizontalHeader();
+    header->setSectionResizeMode(QHeaderView::Stretch);              // все столбцы делят ширину
+    header->setSectionResizeMode(0, QHeaderView::ResizeToContents);   // ID — по содержимому
+    header->setSectionResizeMode(3, QHeaderView::ResizeToContents);   // Количество — по содержимому      
 
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     view  = new QGraphicsView(scene);
@@ -62,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     auto *addButton = new QPushButton("Добавить");
     auto *connectButton = new QPushButton("Соединить выбранные");
+    auto *deleteButton = new QPushButton("Удалить выбранную");
 
     auto *controls = new QHBoxLayout;
     controls->addWidget(new QLabel("Тип:"));
@@ -74,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
     controls->addWidget(verticesBox);
     controls->addWidget(addButton);
     controls->addWidget(connectButton);
+    controls->addWidget(deleteButton);
     controls->addStretch();
     
 
@@ -98,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent)
                 verticesBox->setEnabled(index == 2);
             });
     connect(connectButton, &QPushButton::clicked, this, &MainWindow::onConnectShapes);
+    connect(deleteButton, &QPushButton::clicked, this, &MainWindow::onDeleteShape);
 }
 
 
@@ -162,4 +169,54 @@ void MainWindow::onConnectShapes()
     db.insertConnection(a -> id(), b -> id());
     model -> select();
 
+}
+
+void MainWindow::onDeleteShape()
+{
+    int id = -1;
+
+    const QModelIndexList rows = tableView->selectionModel()->selectedRows();
+    if (!rows.isEmpty()) {
+        id = model->data(model->index(rows.first().row(), 0)).toInt();
+    } else {
+        for (QGraphicsItem *item : scene->selectedItems()) {
+            if (Shape *shape = dynamic_cast<Shape*>(item)) {
+                id = shape->id();
+                break;
+            }
+        }
+    }
+
+    if (id == -1) {
+        statusBar()->showMessage("Выберите фигуру в таблице или на холсте", 3000);
+        return;
+    }
+    deleteShape(id);
+}
+
+void MainWindow::deleteShape(int id)
+{
+    Shape *shape = shapes.value(id, nullptr);
+    if (!shape)
+        return;
+
+    // 1. Линии: отцепить от соседей, убрать со сцены, удалить
+    const QList<Connection*> lines = shape->connections();  
+    for (Connection *c : lines) {
+        Shape *other = (c->getFrom() == shape) ? c->getTo() : c->getFrom();
+        other->removeConnection(c);
+        scene->removeItem(c);
+        delete c;
+    }
+
+    // 2. Фигура: убрать с холста и из словаря
+    const QString type = shape->typeName();   
+    scene->removeItem(shape);
+    shapes.remove(id);
+    delete shape;
+
+    // 3. База: удалить строку, пересчитать, обновить таблицу
+    db.deleteShape(id);
+    db.updateTotalCount(type);
+    model->select();
 }

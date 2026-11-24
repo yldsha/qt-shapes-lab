@@ -78,3 +78,11 @@ void ShapeDatabase::updateTotalCount(const QString &type)
     query.bindValue(":type", type);
     query.exec();
 }
+void ShapeDatabase::deleteShape(int id)
+{
+    QSqlQuery query;
+    query.prepare("DELETE FROM shapes WHERE id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec())
+        qDebug() << "Ошибка удаления фигуры:" << query.lastError().text();
+}

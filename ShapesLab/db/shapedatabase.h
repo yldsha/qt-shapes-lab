@@ -11,6 +11,7 @@ public:
     void insertShape(int id, const QString &type);  // добавить фигуру
     void insertConnection(int fromId, int toId);    // добавить связь
     void updateTotalCount(const QString &type);     // пересчитать количество фигур этого типа
+    void deleteShape(int id);
 
 private:
     void createTables();                            // создать таблицы и представление
