@@ -18,6 +18,8 @@
 #include <QSplitter>
 #include <QHeaderView>
 #include <QItemSelectionModel>
+#include <QGroupBox>
+#include <QFormLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -42,7 +44,46 @@ MainWindow::MainWindow(QWidget *parent)
     auto *header = tableView->horizontalHeader();
     header->setSectionResizeMode(QHeaderView::Stretch);              // все столбцы делят ширину
     header->setSectionResizeMode(0, QHeaderView::ResizeToContents);   // ID — по содержимому
-    header->setSectionResizeMode(3, QHeaderView::ResizeToContents);   // Количество — по содержимому      
+    header->setSectionResizeMode(3, QHeaderView::ResizeToContents);   // Количество — по содержимому 
+
+    //  Фильтр
+    idFromBox = new QSpinBox;
+    idFromBox->setRange(0, 9999);
+    idToBox = new QSpinBox;
+    idToBox->setRange(0, 9999);
+    idToBox->setValue(9999);
+
+    filterTypeBox = new QComboBox;
+    filterTypeBox->addItems({"Все", "Прямоугольник", "Эллипс", "Многоугольник"});
+
+    minCountBox = new QSpinBox;
+    minCountBox->setRange(0, 9999);
+
+    auto *idRange = new QHBoxLayout;          
+    idRange->addWidget(idFromBox);
+    idRange->addWidget(new QLabel("до"));
+    idRange->addWidget(idToBox);
+
+    auto *applyButton = new QPushButton("Применить");
+    auto *resetButton = new QPushButton("Сбросить");
+    auto *filterButtons = new QHBoxLayout;
+    filterButtons->addWidget(applyButton);
+    filterButtons->addWidget(resetButton);
+
+    auto *form = new QFormLayout;          
+    form->addRow("Номера от:", idRange);
+    form->addRow("Тип:", filterTypeBox);
+    form->addRow("Количество не меньше:", minCountBox);
+    form->addRow(filterButtons);
+
+    auto *filterBox = new QGroupBox("Фильтр"); 
+    filterBox->setLayout(form);
+
+    // Правая часть окна: фильтр сверху, таблица снизу
+    auto *rightPanel = new QWidget;
+    auto *rightLayout = new QVBoxLayout(rightPanel);
+    rightLayout->addWidget(filterBox);
+    rightLayout->addWidget(tableView);     
 
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     view  = new QGraphicsView(scene);
@@ -87,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addLayout(controls);
     auto *splitter = new QSplitter;
     splitter->addWidget(view);        // слева холст
-    splitter->addWidget(tableView);   // справа таблица
+    splitter->addWidget(rightPanel); 
     splitter->setSizes({650, 350});
     splitter->setStretchFactor(0, 3); // холст шире таблицы в 3 раза
     splitter->setStretchFactor(1, 1);
@@ -105,6 +146,8 @@ MainWindow::MainWindow(QWidget *parent)
             });
     connect(connectButton, &QPushButton::clicked, this, &MainWindow::onConnectShapes);
     connect(deleteButton, &QPushButton::clicked, this, &MainWindow::onDeleteShape);
+    connect(applyButton, &QPushButton::clicked, this, &MainWindow::onApplyFilter);
+    connect(resetButton, &QPushButton::clicked, this, &MainWindow::onResetFilter);
 }
 
 
@@ -218,5 +261,34 @@ void MainWindow::deleteShape(int id)
     // 3. База: удалить строку, пересчитать, обновить таблицу
     db.deleteShape(id);
     db.updateTotalCount(type);
+    model->select();
+}
+
+void MainWindow::onApplyFilter()
+{
+    QStringList conditions;   // список условий, потом склеим через AND
+
+
+    conditions << QString("id BETWEEN %1 AND %2")
+                  .arg(idFromBox->value())
+                  .arg(idToBox->value());
+
+    if (filterTypeBox->currentIndex() > 0)
+        conditions << QString("type = '%1'").arg(filterTypeBox->currentText());
+
+    if (minCountBox -> value() > 0)
+        conditions << QString("total_count >= %1").arg(minCountBox->value());
+
+    model->setFilter(conditions.join(" AND "));
+    model->select();
+}
+
+void MainWindow::onResetFilter()
+{
+    idFromBox->setValue(0);
+    idToBox->setValue(9999);
+    filterTypeBox->setCurrentIndex(0);   // пункт "Все"
+    minCountBox->setValue(0);
+    model->setFilter("");
     model->select();
 }

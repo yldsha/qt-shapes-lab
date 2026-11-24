@@ -12,6 +12,7 @@ class QSpinBox;
 class Shape;
 class QTableView;
 class QSqlTableModel;
+class QGroupBox;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,11 +30,17 @@ private slots:
     void onAddShape();
     void onConnectShapes();
     void onDeleteShape();
+    void onApplyFilter();
+    void onResetFilter();
 
 private:
     Shape *createShape(int typeIndex, int id, int w, int h, int vertices);
     ShapeDatabase db;
     void deleteShape(int id);
+    QSpinBox  *idFromBox;
+    QSpinBox  *idToBox;
+    QComboBox *filterTypeBox;
+    QSpinBox  *minCountBox;
     
 
     Ui::MainWindow *ui;
