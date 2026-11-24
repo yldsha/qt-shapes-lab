@@ -17,16 +17,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    shape.cpp \
-    connection.cpp
+    ui/mainwindow.cpp \
+    graph/shape.cpp \
+    graph/connection.cpp \
+    db/shapedatabase.cpp
 
 HEADERS += \
-    mainwindow.h \
-    shape.h \
-    connection.h
+    ui/mainwindow.h \
+    graph/shape.h \
+    graph/connection.h \
+    db/shapedatabase.h
+
 FORMS += \
-    mainwindow.ui
+    ui/mainwindow.ui
+
+INCLUDEPATH += $$PWD/ui $$PWD/graph $$PWD/db
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
