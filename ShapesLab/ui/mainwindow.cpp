@@ -21,6 +21,9 @@
 #include <QItemSelectionModel>
 #include <QGroupBox>
 #include <QFormLayout>
+#include <QShortcut>
+#include <QPainter>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -42,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     tableView->resizeColumnsToContents();
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);   
     tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);  
+    tableView->setAlternatingRowColors(true);
     tableView->setItemDelegateForColumn(3, new CountDelegate(tableView));  
     auto *header = tableView->horizontalHeader();
     header->setSectionResizeMode(QHeaderView::Stretch);              // все столбцы делят ширину
@@ -70,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
     idRange->addWidget(idToBox);
 
     auto *applyButton = new QPushButton("Применить");
+    applyButton->setObjectName("primary");
     auto *resetButton = new QPushButton("Сбросить");
     auto *filterButtons = new QHBoxLayout;
     filterButtons->addWidget(applyButton);
@@ -93,6 +98,19 @@ MainWindow::MainWindow(QWidget *parent)
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     view  = new QGraphicsView(scene);
 
+        setWindowTitle("Редактор фигур");
+    view->setRenderHint(QPainter::Antialiasing);
+
+    // Фон холста в клеточку
+    QPixmap cell(20, 20);                    
+    cell.fill(Qt::white);
+    QPainter gridPainter(&cell);
+    gridPainter.setPen(QColor(230, 230, 240));
+    gridPainter.drawLine(0, 19, 19, 19);      
+    gridPainter.drawLine(19, 0, 19, 19);     
+    gridPainter.end();
+    view->setBackgroundBrush(QBrush(cell));   
+
     // Панель управления
     typeBox = new QComboBox;
     typeBox->addItems({"Прямоугольник", "Эллипс", "Многоугольник"});
@@ -111,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
     verticesBox->setEnabled(false);
 
     auto *addButton = new QPushButton("Добавить");
+    addButton->setObjectName("primary");
     auto *connectButton = new QPushButton("Соединить выбранные");
     auto *deleteButton = new QPushButton("Удалить выбранную");
 

@@ -13,6 +13,7 @@ class Shape;
 class QTableView;
 class QSqlTableModel;
 class QGroupBox;
+class QLabel;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -54,7 +55,9 @@ private:
     QSqlTableModel *model;
 
     int nextId = 1;              
-    QMap<int, Shape*> shapes;    
+    QMap<int, Shape*> shapes;   
+    QLabel *countersLabel;     // "Фигур: N · Связей: M" в строке состояния
+    void updateCounters(); 
 };
 
 #endif // MAINWINDOW_H
